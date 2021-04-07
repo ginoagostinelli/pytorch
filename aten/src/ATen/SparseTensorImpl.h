@@ -33,6 +33,8 @@ public:
   // Public for now...
   explicit SparseTensorImpl(at::DispatchKeySet, const caffe2::TypeMeta);
 
+  void release_resources() override;
+
   int64_t nnz() const { return values_.size(0); }
   int64_t sparse_dim() const { return sparse_dim_; }
   int64_t dense_dim() const { return dense_dim_; }
@@ -50,7 +52,6 @@ public:
 #ifdef DEBUG
   bool has_storage() const override;
 #endif
-  const Storage& storage() const override;
 
   // WARNING: This function does NOT preserve invariants of sparse_dim/dense_dim with
   // respect to indices and values
@@ -261,6 +262,8 @@ private:
     dest_sparse_impl->values_ = src_sparse_impl->values();
     dest_sparse_impl->coalesced_ = src_sparse_impl->coalesced();
   }
+
+  const char* tensorimpl_type_name() const override;
 };
 
 } // namespace at
